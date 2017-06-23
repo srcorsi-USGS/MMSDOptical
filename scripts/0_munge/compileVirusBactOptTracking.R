@@ -16,7 +16,7 @@ cached.save <- "1_munge"
 
 ########################
 #UWM Bacteria data
-dfBact <- read.csv(file.path("raw_data","PhaseIV","USGS_MMSD results-7-16-15.csv"),stringsAsFactors = FALSE)
+dfBact <- read.csv(file.path(raw.path,"PhaseIV","USGS_MMSD results-7-16-15.csv"),stringsAsFactors = FALSE)
 LODs <- c(225,225,225,225,225)
 bactAbbrev <- c('lachno','bacHum','ent','eColi','fc')
 names(LODs) <- bactAbbrev
@@ -38,7 +38,7 @@ apply(dfBact[,bacteriaNames],2,sumNAs)
 
 ########################
 # USDA Virus data
-dfVirus <- read.csv(file.path("raw_data","PhaseIV","2012-2014 MMSD dataSRCRevised.csv"),stringsAsFactors = FALSE)
+dfVirus <- read.csv(file.path(raw.path,"PhaseIV","2012-2014 MMSD dataSRCRevised.csv"),stringsAsFactors = FALSE)
 humanViruses <- c("Adenovirus.C.D.F","Adenovirus.A","Adenovirus.B","Enterovirus",
                   "G1.Norovirus","G2.Norovirus","Polyomavirus")
 bovineViruses.orig <- c("Rotavirus.A","Coronavirus","Enterovirus.1","Adenovirus","Polyomavirus.1")
@@ -67,7 +67,7 @@ apply(dfVirus[,allPathogens],2,sumNAs)
 
 ###############################
 # Optical summary data
-dfOptSum <- read.csv(file.path("raw_data","PhaseIV","MMSDOptSummary.csv"),stringsAsFactors = FALSE,skip = 1)
+dfOptSum <- read.csv(file.path(raw.path,"PhaseIV","MMSDOptSummary.csv"),stringsAsFactors = FALSE,skip = 1)
 
 # remove spaces and dashes in Sample ID
 dfOptSum$FieldExpID <- gsub(" ", "", dfOptSum$FieldExpID, fixed = TRUE)
@@ -79,14 +79,15 @@ dfLeftOut <- dfOptSum[!dfOptSum$FieldExpID  %in% dfmerge$Sample.ID,]
 dfLeftOut2 <- dfOptSum[!dfmerge$Sample.ID %in%  dfOptSum$FieldExpID,]
 
 
-QARows <- multiGrep2(c('Blank','Replicate'),dfmerge$Comments,ignore.case = TRUE,)
-dfQA <- dfmerge[QARows,]
-df <- dfmerge[-QARows,]
+# QARows <- multiGrep2(c('Blank','Replicate'),dfmerge$Comments,ignore.case = TRUE,)
+# dfQA <- dfmerge[QARows,]
+# df <- dfmerge[-QARows,]
 
 
 ########################
 # Sample tracking data
-dfTracking <-read.csv("Sample tracking.csv",stringsAsFactors = FALSE)
+dfTracking <- read.csv(file.path(raw.path,"PhaseIV","Sample tracking.csv"),stringsAsFactors = FALSE)
+
 apply(dfTracking[,c("Virus.Sample.","Optics.DOC.Sample.", "GLWI.Sample.")],2,sum,na.rm=TRUE)
 
 # remove spaces in Sample ID
@@ -152,7 +153,7 @@ sum(abs((pdateTracking - pdateVirus)/3600/24) > 1,na.rm=TRUE)
 
 pdateTracking - pdateBact #Fixed a few dates in the sample tracking that had 2-digit years: Phase IV/virus/R/Sample tracking.xls
 sum(abs((pdateTracking - pdateBact)/3600/24) > 7,na.rm=TRUE)
-
+data.frame(pdateTracking,pdateBact)
 
 ############################################
 # Separate QA samples
@@ -203,16 +204,17 @@ dfCheck <- dfmerge[which(dfmerge$GRnumber %in% dfOptNotIncluded$GRnumber),]
 # All missing samples are QA. Looks like all optical samples made it through
 
 
+# change Rdata to rds in the filenames
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+write.csv(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.csv'),row.names=FALSE)
+saveRDS(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.Rdata'))
 
-write.csv(df,file='VirusPhaseIVData.csv',row.names=FALSE)
-save(df,file='VirusPhaseIVData.Rdata')
+write.csv(dfQA,file=file.path(cached.path,cached.save,'QAVirusPhaseIVData.csv'),row.names=FALSE)
+saveRDS(dfQA,file=file.path(cached.path,cached.save,'QAVirusPhaseIVData.Rdata'))
 
-write.csv(dfQA,file='QAVirusPhaseIVData.csv',row.names=FALSE)
-save(dfQA,file='QAVirusPhaseIVData.Rdata')
+write.csv(dfWW,file=file.path(cached.path,cached.save,'WWVirusPhaseIVData.csv'),row.names=FALSE)
+saveRDS(dfWW,file=file.path(cached.path,cached.save,'WWVirusPhaseIVData.Rdata'))
 
-write.csv(dfWW,file='WWVirusPhaseIVData.csv',row.names=FALSE)
-save(dfWW,file='WWVirusPhaseIVData.Rdata')
-
-write.csv(dfWA,file='WAMADVirusPhaseIVData.csv',row.names=FALSE)
-save(dfWA,file='WAMADVirusPhaseIVData.Rdata')
+write.csv(dfWA,file=file.path(cached.path,cached.save,'WAMADVirusPhaseIVData.csv'),row.names=FALSE)
+saveRDS(dfWA,file=file.path(cached.path,cached.save,'WAMADVirusPhaseIVData.Rdata'))
 
