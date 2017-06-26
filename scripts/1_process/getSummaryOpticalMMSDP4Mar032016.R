@@ -3,11 +3,13 @@
 
 library(USGSHydroOpt)
 library(data.table)
+library(tidyr)
 
 #set data directories
 raw.path <- "raw_data"
 cached.path <- "cached_data"
 summary.path <- "SummaryVariables"
+summary.save <- "1_SummaryVariables"
 cached.save <- "0_munge"
 
 checkDups <- function(df,parm){
@@ -34,11 +36,11 @@ checkDups <- function(df,parm){
 
 load(file.path(raw.path,"PhaseIV","VirusPhaseIVData.Rdata"))
 load(file.path(raw.path,"PhaseIV","MMSDOpticalData.RData"))
-load(file.path(raw.path,summary.path,"ratioOrder2016-03-03.Rdata"))
 
 dfabs <- as.data.frame(dfabs) #convert from data.table to data.frame
 
 #Generate 3-D EEMS array
+names(dffl) <- substr(names(dffl),1,7)
 MMSDP43DEEMs <-VectorizedTo3DArray(df = dffl,ExEm="ex/em",grnum='GRnumber')
 
 #Name the wavelength column in the abs file
@@ -56,6 +58,7 @@ dfMissingFl <- dfOpt1[which(!(dfOpt1$GRnumber %in% substr(names(dffl),1,7))),]
 #Subset the summary file to include only those that are present in the fluorescence file
 dfOpt1 <- dfOpt1[which((dfOpt1$GRnumber %in% substr(names(dffl),1,7))),]
 
+
 names(dffl) <- substr(names(dffl),1,7)
 
 # Read summary signals to extract from Fl and abs info
@@ -72,6 +75,7 @@ ratioSignalsSr <- ratioSignalsSr[which(ratioSignalsSr[2]>0),1]
 ratioSignalsSniff <- read.csv(paste(SummaryDir,"ratioSignalsSniff.csv",sep=""),as.is=TRUE)
 ratioSignalsSniff <- ratioSignalsSniff[which(ratioSignalsSniff[2]>0),1]
 logSignals <- read.csv(paste(SummaryDir,"logSignals.csv",sep=""),as.is=TRUE)[,1]
+ratioOrder <- readRDS(file.path(cached.path,summary.save,"ratioOrder.rds"))
 
 
 # Add summary variables to summary data frame
@@ -120,15 +124,24 @@ for(var in names(dfOpt2)){
 names(bad) <- names(dfOpt2)
 bad[which(bad>0)]
 
-# 
-# fDate <- as.character(Sys.Date())
-# save(dfOptSumAll,file=paste("dfOptSummaryMMSDP3",fDate,".RData",sep=""))
-# write.csv(dfOptSumAll,paste("dfOptSummaryMMSDP3",fDate,".csv",sep=""),row.names=FALSE)
-# 
-# varNames <- names(dfOptSumAll)
-# varNames
-# write.csv(names(dfOptSumAll),file=paste("namesAllMMSDP3",fDate,".csv",sep=""),row.names=FALSE)
-# 
+# Determine ratio order and save it for use with Phase III summary optical determination
+names(dfOptSumAll)
+ratioRows <- which(substr(names(dfOptSumAll),start = 1,stop = 1)=="r")
+ratioVars <- substr(names(dfOptSumAll)[ratioRows],2,50)
 
+r1 <- character()
+r2 <- character()
+for(i in 1:length(ratioVars)){
+  if(substr(ratioVars[i],1,3) == "Sag"){
+    r1 <- c(r1,substr(ratioVars[i],1,10))
+    r2 <- c(r2,substr(ratioVars[i],12,50))
+  }else{
+    r1 <- c(r1,strsplit(ratioVars[i],"_")[[1]][1])
+    r2 <- c(r2,strsplit(ratioVars[i],"_")[[1]][2])
+  }
+}
 
+dfRatioOrder <- data.frame(var1 = r1,var2 = r2,stringsAsFactors = FALSE)
 
+saveRDS(dfOptSumAll,file=file.path(cached.path,summary.save,"dfOptSummaryMMSDP4.rds"))
+        

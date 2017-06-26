@@ -7,6 +7,7 @@ library(USGSHydroOpt)
 raw.path <- "raw_data"
 cached.path <- "cached_data"
 summary.path <- "SummaryVariables"
+summary.save <- "1_SummaryVariables"
 cached.save <- "0_munge"
 
 checkDups <- function(df,parm){
@@ -20,7 +21,6 @@ load(file.path(raw.path,"PhaseIII","MMSD3DEEMs.RData"))
 load(file.path(raw.path,"PhaseIII","dfOptAnalysisDataMMSDJan2015.RData"))
 dfOpt1 <- dfOptSumAll[,-(which(names(dfOptSumAll)=="OB1"):dim(dfOptSumAll)[2])]
 #dfOpt1$GRnumber %in% names(dfabs)
-load(file.path(raw.path,summary.path,"ratioOrder2016-03-03.Rdata"))
 
 # Read summary signals to extract from Fl and abs info
 SummaryDir <- paste0("./",raw.path,"/",summary.path,"/")
@@ -36,6 +36,7 @@ ratioSignalsSr <- ratioSignalsSr[which(ratioSignalsSr[2]>0),1]
 ratioSignalsSniff <- read.csv(paste(SummaryDir,"ratioSignalsSniff.csv",sep=""),as.is=TRUE)
 ratioSignalsSniff <- ratioSignalsSniff[which(ratioSignalsSniff[2]>0),1]
 logSignals <- read.csv(paste(SummaryDir,"logSignals.csv",sep=""),as.is=TRUE)[,1]
+ratioOrder <- readRDS(file.path(cached.path,summary.save,"ratioOrder.rds"))
 
 
 # Add summary variables to summary data frame
@@ -83,7 +84,7 @@ for(var in names(dfOpt2)){
 names(bad) <- names(dfOpt2)
 bad[which(bad>0)]
 
-saveRDS(dfOptSumAll,file=file.path(cached.path,cached.save,"dfOptSummaryMMSDP3.rds"))
+saveRDS(dfOptSumAll,file=file.path(cached.path,summary.save,"dfOptSummaryMMSDP3.rds"))
 
 
 
