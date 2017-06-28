@@ -17,10 +17,6 @@ which(substr(names(df),1,1)=="A")
 AbsVars <- names(df)[c(61:138,232:240)]
 FlVars <- names(df)[c(17:60,139:231)]
 IVs <- c(AbsVars,FlVars)
-df$sinDate <- fourier(df$psdate)[,1]
-df$cosDate <- fourier(df$psdate)[,2]
-df$UW <- ifelse(df$abbrev=="UW",1,0)
-df$MC <- ifelse(df$abbrev=="MC",1,0)
 
 IVs <- c(IVs,c("UW","MC","sinDate","cosDate"))
 penalty.factor <- c(rep(1,length(c(AbsVars,FlVars))),0,0,0,0)

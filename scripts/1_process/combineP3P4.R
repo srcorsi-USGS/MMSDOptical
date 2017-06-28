@@ -1,5 +1,7 @@
 # Merge summary optical data files from Phase III and Phase IV efforts
 
+library(smwrBase) # Use this to determine seasonality terms
+
 #set data directories
 raw.path <- "raw_data"
 cached.path <- "cached_data"
@@ -36,6 +38,20 @@ commonNames <- names(dfP3)[which(names(dfP3) %in% names(dfP4))]
 begin <- 1
 end <- length(commonNames)
 df <- rbind(dfP3[,commonNames[begin:end]],dfP4[,commonNames[begin:end]])
+
+#Add seasonal and site terms
+df$sinDate <- fourier(df$psdate)[,1]
+df$cosDate <- fourier(df$psdate)[,2]
+df$BK <- ifelse(df$abbrev=="BK",1,0)
+df$MF <- ifelse(df$abbrev=="MF",1,0)
+df$UW <- ifelse(df$abbrev=="UW",1,0)
+df$LD <- ifelse(df$abbrev=="LD",1,0)
+df$HW <- ifelse(df$abbrev=="HW",1,0)
+df$MW <- ifelse(df$abbrev=="MW",1,0)
+df$MC <- ifelse(df$abbrev=="MC",1,0)
+df$CG <- ifelse(df$abbrev=="CG",1,0)
+
+c("BK","MF","UW","LD","HW","MW","MC","CG")
 
 saveRDS(df,file=file.path(cached.path,summary.save,"dfOptP3P4Combined.rds"))
 
