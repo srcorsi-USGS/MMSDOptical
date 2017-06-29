@@ -2,6 +2,8 @@
 
 library(glmnet)
 library(smwrBase)
+library(survival)
+library(MASS)
 
 #set data directories
 raw.path <- "raw_data"
@@ -27,6 +29,7 @@ selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW"))
 selectedRows <- which(df$abbrev %in% c("MC","MW","UW"))
 selectedRows <- which(df$abbrev %in% sites)
 selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW","MF","CG","LD"))
+selectedRows <- which(df$abbrev %in% c("MC","UW"))
 
 x <- as.matrix(df[selectedRows,IVs])
 y <- log10(df[selectedRows,response])
@@ -75,8 +78,6 @@ legend(x="topleft",legend=names(colorOptions),col=colorOptions,pch=20,text.col=c
 
 
 Active.Coef.names
-library(survival)
-library(MASS)
 y.orig <- log10(df[selectedRows,response])
 y <- Surv(y.orig, df[selectedRows,response]>225, type="left")
 dfPredStd <- as.data.frame(df[selectedRows,IVs])
@@ -85,7 +86,7 @@ formLower <- formula(paste('y ~',paste(c("sinDate","cosDate"),collapse=' + ')))
 msurvStd <- survreg(formUpper,data=dfPredStd,dist='weibull')
 summary(msurvStd)
 
-msurvStep <- stepAIC(msurvStd,list(formUpper,formLower))
+msurvStep <- stepAIC(msurvStd,list(upper=formUpper,lower=formLower))
 summary(msurvStep)
 
 predictions <- predict(msurvStep,newdata = df[selectedRows,IVs])
