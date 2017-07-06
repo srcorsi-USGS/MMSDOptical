@@ -17,8 +17,8 @@ script.path <- "scripts"
 process.path <- "1_process"
 
 #Load functions for determining MRLs and adjusting data based on MRLs
-source(file.path(script.path,process.path,"absMRL.R"))
-source(file.path(script.path,process.path,"absMRLAdjust.R"))
+source(file.path(script.path,process.path,"optMRL.R"))
+source(file.path(script.path,process.path,"optMRLAdjust.R"))
 
 GRnumber <- "GRnumber" #Lab ID number
 Wavelength <- "Wavelength" # column name defining absorbance wavelengths
@@ -47,8 +47,8 @@ plot(dfBlankLong$value~as.numeric(dfBlankLong$Wavelength),xlim=c(250,300),ylim=c
 
 
 # Compute MRLs and adjust vectorized abs data
-dfMRLs <- absMRL(dfabs,Wavelength,blankGRnums)
-absList <- absMRLAdjust(dfabs,dfMRLs,Wavelength,sampleGRnums)
+dfMRLs <- optMRL(dfabs,Wavelength,blankGRnums)
+absList <- optMRLAdjust(dfabs,dfMRLs,Wavelength,sampleGRnums)
 
 #DF of adjusted abs values
 dfabs2 <- absList[[1]]
@@ -119,7 +119,7 @@ dfOptSum <- dfOptSumAll
 sampleGRnums <- dfOptSum[which(!is.na(dfOptSum[,GRnumber])),"GRnumber"]
 
 # Adjust vectorized abs data
-absList <- absMRLAdjust(dfabs,dfMRLs,Wavelength,sampleGRnums)
+absList <- optMRLAdjust(dfabs,dfMRLs,Wavelength,sampleGRnums)
 
 #DF of adjusted abs values
 dfabs2 <- absList[[1]]
