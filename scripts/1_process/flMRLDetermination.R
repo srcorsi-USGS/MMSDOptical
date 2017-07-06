@@ -40,6 +40,7 @@ dffl <- dffl[-naRows,]
 
 #Define GRnumbers for environmental samples in filtered summary file
 sampleGRnums <- dfOptSum[which(!is.na(dfOptSum[,GRnumber])),"GRnumber"]
+sampleGRnums <- sampleGRnums[which(sampleGRnums %in% names(dffl))]
 
 #Define GRnumbers for blank samples in original summary file from CA
 blankRows <- grep("blank",df$QA, ignore.case = TRUE)
@@ -97,6 +98,40 @@ MRLdiff <- dfMRLs[1:550,"MRL"] - dfMRLs[2:551,"MRL"]
 plot(MRLdiff)
 which(MRLdiff > 0.002)
 
+#Examine the fraction of fluorescence values that are censored
+#Most wavelengths that we are inerested in (file = ex_ems_means.csv in raw_data directory)
+#are low or no percentage censored except peak B (275/304) and the wastewater range signal 
+#which is a rectangle from ex = 255 to 290 to em = 302 to 350.
+
+threshFraction <- 0.01
+fractionCensored <- apply(flList[[2]][,-1],1,FUN=function(x) length(grep("<",x))/length(x))
+names(fractionCensored) <- flList[[2]][,1]
+wavesCensored <- fractionCensored[which(fractionCensored>threshFraction)]
+
+filenm <- "fractionCensored.pdf"
+pdf(filenm,width=15,height=8)
+plot(wavesCensored,xaxt="n")
+axis(side=1,at=1:length(wavesCensored),labels = names(wavesCensored),las=2,cex.axis=0.75)
+
+dfwavesCensored <- separate(data=data.frame(exem=names(wavesCensored)),col = exem,into = c("ex","em"),sep = "/")
+dfwavesCensored$censoredfraction <- wavesCensored
+dfwavesCensored$ex <- as.numeric(dfwavesCensored$ex)
+dfwavesCensored$em <- as.numeric(dfwavesCensored$em)
+
+colfunc <- colorRampPalette(c("lightblue","darkblue"))
+plotColors <- colfunc(10)
+dfwavesCensored$plotColors <- plotColors[round(dfwavesCensored$censoredfraction*9)+1]
+
+plot(dfwavesCensored$ex,dfwavesCensored$em,
+     xlab="Excitation wavelength (nm)",ylab="Emmission wavelength(nm)",
+     col=dfwavesCensored$plotColors,pch=20)
+mtext(side=3,line=1,font=2,
+  paste0("Excitation/Emmission Wavelengths with greater than a ",threshFraction," proportion censored values"))
+legend("topleft",legend = paste("<",c(1:10)/10),col = plotColors,pch=20)
+
+dev.off()
+shell.exec(filenm)
+
 # Generate plots with original and adjusted values
 filenm <- "flPlotsP4.pdf"
 pdf(filenm)
@@ -133,14 +168,21 @@ shell.exec(filenm)
 ### Phase 3 data ###
 # Load Phase 3 summary data, 3-D fluorescence, and absorbance data
 
-load(file.path(raw.path,"PhaseIII","MMSDflEEMs.RData"))
+load(file.path(raw.path,"PhaseIII","MMSDabsEEMs.RData"))
 load(file.path(raw.path,"PhaseIII","dfOptAnalysisDataMMSDJan2015.RData"))
 dfMRLs <- readRDS(file.path(cached.path,cached.save,"flMRLs.rds"))
+dffl <- dfFluor
+Wavelength <- "exem"
+names(dffl)[1] <- Wavelength
 
+#Remove rows with all NAs
+naRows <- which(apply(dffl,1,FUN=function(x)mean(is.na(x)))>0.5)
+dffl <- dffl[-naRows,]
 dfOptSum <- dfOptSumAll
 
 #Define GRnumbers for environmental samples in filtered summary file
 sampleGRnums <- dfOptSum[which(!is.na(dfOptSum[,GRnumber])),"GRnumber"]
+sampleGRnums %in% names(dffl)
 
 # Adjust vectorized fl data
 flList <- optMRLAdjust(dffl,dfMRLs,Wavelength,sampleGRnums)
@@ -150,6 +192,41 @@ dffl2 <- flList[[1]]
 
 saveRDS(dffl2,file=file.path(cached.path,cached.save,"flP3MRLAdjusted.rds"))
 saveRDS(flList[[2]],file=file.path(cached.path,cached.save,"flP3withRemarks.rds"))
+
+#Examine the fraction of fluorescence values that are censored
+#Most wavelengths that we are inerested in (file = ex_ems_means.csv in raw_data directory)
+#are low or no percentage censored except peak B (275/304) and the wastewater range signal 
+#which is a rectangle from ex = 255 to 290 to em = 302 to 350.
+
+threshFraction <- 0.01
+fractionCensored <- apply(flList[[2]][,-1],1,FUN=function(x) length(grep("<",x))/length(x))
+names(fractionCensored) <- flList[[2]][,1]
+wavesCensored <- fractionCensored[which(fractionCensored>threshFraction)]
+
+filenm <- "fractionCensoredP3.pdf"
+pdf(filenm,width=15,height=8)
+plot(wavesCensored,xaxt="n")
+axis(side=1,at=1:length(wavesCensored),labels = names(wavesCensored),las=2,cex.axis=0.75)
+
+dfwavesCensored <- separate(data=data.frame(exem=names(wavesCensored)),col = exem,into = c("ex","em"),sep = "/")
+dfwavesCensored$censoredfraction <- wavesCensored
+dfwavesCensored$ex <- as.numeric(dfwavesCensored$ex)
+dfwavesCensored$em <- as.numeric(dfwavesCensored$em)
+
+colfunc <- colorRampPalette(c("lightblue","darkblue"))
+plotColors <- colfunc(10)
+dfwavesCensored$plotColors <- plotColors[round(dfwavesCensored$censoredfraction*9)+1]
+
+plot(dfwavesCensored$ex,dfwavesCensored$em,
+     xlab="Excitation wavelength (nm)",ylab="Emmission wavelength(nm)",
+     col=dfwavesCensored$plotColors,pch=20)
+mtext(side=3,line=1,font=2,
+      paste0("Excitation/Emmission Wavelengths with greater than a ",threshFraction," proportion censored values"))
+legend("topleft",legend = paste("<",c(1:10)/10),col = plotColors,pch=20)
+
+dev.off()
+shell.exec(filenm)
+
 
 
 # Generate plots with original and adjusted values
