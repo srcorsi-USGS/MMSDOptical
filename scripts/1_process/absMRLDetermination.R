@@ -5,7 +5,7 @@
 # Workflow for determing MRLs and adjusting data for Phase III and IV data
 
 library(USGSHydroOpt)
-
+library(tidyr)
 
 #set data directories
 raw.path <- "raw_data"
@@ -96,15 +96,6 @@ for(absCol in sampleGRnums){
 dev.off()
 shell.exec(filenm)
 
-library(tidyr)
-dfBlankLong <- gather(dfblanks,GRnumber,value,-Wavelength)
-boxplot(dfBlankLong$value~dfBlankLong$Wavelength,xlim=c(1,20))
-
-plot(dfBlankLong$value~as.numeric(dfBlankLong$Wavelength),xlim=c(200,250))
-
-blankOutliers <- unique(dfBlankLong[which(dfBlankLong$value > 0.04),"GRnumber"])
-
-test <- df[which(df$GRnumber %in% blankOutliers),]
 
 ### Phase 3 data ###
 # Load Phase 3 summary data, 3-D fluorescence, and absorbance data

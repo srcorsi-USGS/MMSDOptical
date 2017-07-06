@@ -14,7 +14,7 @@
 #' @export 
 #' @return 
 
-absMRL <- function(df,Wavelength,blankGRnums) {
+optMRL <- function(df,Wavelength,blankGRnums) {
   # Generate data frame with information on the blank samples by wavelength and
   # compute the minimum reporting level based on mean + 3 * SD for the blank samples
   # If the mean is less than zero, set the MRL to 3* SD
