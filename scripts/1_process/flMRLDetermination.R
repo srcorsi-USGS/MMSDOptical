@@ -56,26 +56,26 @@ dfBlankLong <- gather(dfblanks,GRnumber,value,-exem)
 blankOutliers <- unique(dfBlankLong[which(dfBlankLong$value > 0.04),"GRnumber"])
 
 xnums <- as.numeric(factor(dfBlankLong$exem,levels=dffl$exem))
-
-filenm <- "P4BlankPlots.pdf"
-pdf(filenm,width = 20,height = 8)
-for(exWave in unique(substr(dfblanks[,Wavelength],1,3))){
-
-  #exWave <- 240
-exemRange <- which(substr(dfBlankLong[,Wavelength],1,3)==exWave)
-exemNames <- which(substr(dfblanks[,Wavelength],1,3)==exWave)
-  subdf <- dfBlankLong[exemRange,]
-  subdf <- subset(subdf,!is.na(value))
-xnums <- as.numeric(factor(subdf$exem,levels=dfblanks[exemNames, "exem"]))
-waveNames <- dfblanks[exemNames, "exem"]
-plot(subdf$value~xnums,main=exWave,xaxt="n")
-axis(side=1,at=1:length(waveNames),labels=waveNames,las=2,cex=0.5)
-
-#subdf[which(subdf$value>0.08),Wavelength]
-#subdf[which(subdf$value>0.12),"GRnumber"]
-}
-dev.off()
-shell.exec(filenm)
+# 
+# filenm <- "P4BlankPlots.pdf"
+# pdf(filenm,width = 20,height = 8)
+# for(exWave in unique(substr(dfblanks[,Wavelength],1,3))){
+# 
+#   #exWave <- 240
+# exemRange <- which(substr(dfBlankLong[,Wavelength],1,3)==exWave)
+# exemNames <- which(substr(dfblanks[,Wavelength],1,3)==exWave)
+#   subdf <- dfBlankLong[exemRange,]
+#   subdf <- subset(subdf,!is.na(value))
+# xnums <- as.numeric(factor(subdf$exem,levels=dfblanks[exemNames, "exem"]))
+# waveNames <- dfblanks[exemNames, "exem"]
+# plot(subdf$value~xnums,main=exWave,xaxt="n")
+# axis(side=1,at=1:length(waveNames),labels=waveNames,las=2,cex=0.5)
+# 
+# #subdf[which(subdf$value>0.08),Wavelength]
+# #subdf[which(subdf$value>0.12),"GRnumber"]
+# }
+# dev.off()
+# shell.exec(filenm)
 
 
 which(dfblanks[which(dfblanks[,Wavelength]=="265/292"),]>0.2)
@@ -108,29 +108,29 @@ fractionCensored <- apply(flList[[2]][,-1],1,FUN=function(x) length(grep("<",x))
 names(fractionCensored) <- flList[[2]][,1]
 wavesCensored <- fractionCensored[which(fractionCensored>threshFraction)]
 
-filenm <- "fractionCensored.pdf"
-pdf(filenm,width=15,height=8)
-plot(wavesCensored,xaxt="n")
-axis(side=1,at=1:length(wavesCensored),labels = names(wavesCensored),las=2,cex.axis=0.75)
-
-dfwavesCensored <- separate(data=data.frame(exem=names(wavesCensored)),col = exem,into = c("ex","em"),sep = "/")
-dfwavesCensored$censoredfraction <- wavesCensored
-dfwavesCensored$ex <- as.numeric(dfwavesCensored$ex)
-dfwavesCensored$em <- as.numeric(dfwavesCensored$em)
-
-colfunc <- colorRampPalette(c("lightblue","darkblue"))
-plotColors <- colfunc(10)
-dfwavesCensored$plotColors <- plotColors[round(dfwavesCensored$censoredfraction*9)+1]
-
-plot(dfwavesCensored$ex,dfwavesCensored$em,
-     xlab="Excitation wavelength (nm)",ylab="Emmission wavelength(nm)",
-     col=dfwavesCensored$plotColors,pch=20)
-mtext(side=3,line=1,font=2,
-  paste0("Excitation/Emmission Wavelengths with greater than a ",threshFraction," proportion censored values"))
-legend("topleft",legend = paste("<",c(1:10)/10),col = plotColors,pch=20)
-
-dev.off()
-shell.exec(filenm)
+# filenm <- "fractionCensored.pdf"
+# pdf(filenm,width=15,height=8)
+# plot(wavesCensored,xaxt="n")
+# axis(side=1,at=1:length(wavesCensored),labels = names(wavesCensored),las=2,cex.axis=0.75)
+# 
+# dfwavesCensored <- separate(data=data.frame(exem=names(wavesCensored)),col = exem,into = c("ex","em"),sep = "/")
+# dfwavesCensored$censoredfraction <- wavesCensored
+# dfwavesCensored$ex <- as.numeric(dfwavesCensored$ex)
+# dfwavesCensored$em <- as.numeric(dfwavesCensored$em)
+# 
+# colfunc <- colorRampPalette(c("lightblue","darkblue"))
+# plotColors <- colfunc(10)
+# dfwavesCensored$plotColors <- plotColors[round(dfwavesCensored$censoredfraction*9)+1]
+# 
+# plot(dfwavesCensored$ex,dfwavesCensored$em,
+#      xlab="Excitation wavelength (nm)",ylab="Emmission wavelength(nm)",
+#      col=dfwavesCensored$plotColors,pch=20)
+# mtext(side=3,line=1,font=2,
+#   paste0("Excitation/Emmission Wavelengths with greater than a ",threshFraction," proportion censored values"))
+# legend("topleft",legend = paste("<",c(1:10)/10),col = plotColors,pch=20)
+# 
+# dev.off()
+# shell.exec(filenm)
 
 # # Generate plots with original and adjusted values
 # filenm <- "flPlotsP4.pdf"
@@ -202,30 +202,30 @@ threshFraction <- 0.01
 fractionCensored <- apply(flList[[2]][,-1],1,FUN=function(x) length(grep("<",x))/length(x))
 names(fractionCensored) <- flList[[2]][,1]
 wavesCensored <- fractionCensored[which(fractionCensored>threshFraction)]
-
-filenm <- "fractionCensoredP3.pdf"
-pdf(filenm,width=15,height=8)
-plot(wavesCensored,xaxt="n")
-axis(side=1,at=1:length(wavesCensored),labels = names(wavesCensored),las=2,cex.axis=0.75)
-
-dfwavesCensored <- separate(data=data.frame(exem=names(wavesCensored)),col = exem,into = c("ex","em"),sep = "/")
-dfwavesCensored$censoredfraction <- wavesCensored
-dfwavesCensored$ex <- as.numeric(dfwavesCensored$ex)
-dfwavesCensored$em <- as.numeric(dfwavesCensored$em)
-
-colfunc <- colorRampPalette(c("lightblue","darkblue"))
-plotColors <- colfunc(10)
-dfwavesCensored$plotColors <- plotColors[round(dfwavesCensored$censoredfraction*9)+1]
-
-plot(dfwavesCensored$ex,dfwavesCensored$em,
-     xlab="Excitation wavelength (nm)",ylab="Emmission wavelength(nm)",
-     col=dfwavesCensored$plotColors,pch=20)
-mtext(side=3,line=1,font=2,
-      paste0("Excitation/Emmission Wavelengths with greater than a ",threshFraction," proportion censored values"))
-legend("topleft",legend = paste("<",c(1:10)/10),col = plotColors,pch=20)
-
-dev.off()
-shell.exec(filenm)
+# 
+# filenm <- "fractionCensoredP3.pdf"
+# pdf(filenm,width=15,height=8)
+# plot(wavesCensored,xaxt="n")
+# axis(side=1,at=1:length(wavesCensored),labels = names(wavesCensored),las=2,cex.axis=0.75)
+# 
+# dfwavesCensored <- separate(data=data.frame(exem=names(wavesCensored)),col = exem,into = c("ex","em"),sep = "/")
+# dfwavesCensored$censoredfraction <- wavesCensored
+# dfwavesCensored$ex <- as.numeric(dfwavesCensored$ex)
+# dfwavesCensored$em <- as.numeric(dfwavesCensored$em)
+# 
+# colfunc <- colorRampPalette(c("lightblue","darkblue"))
+# plotColors <- colfunc(10)
+# dfwavesCensored$plotColors <- plotColors[round(dfwavesCensored$censoredfraction*9)+1]
+# 
+# plot(dfwavesCensored$ex,dfwavesCensored$em,
+#      xlab="Excitation wavelength (nm)",ylab="Emmission wavelength(nm)",
+#      col=dfwavesCensored$plotColors,pch=20)
+# mtext(side=3,line=1,font=2,
+#       paste0("Excitation/Emmission Wavelengths with greater than a ",threshFraction," proportion censored values"))
+# legend("topleft",legend = paste("<",c(1:10)/10),col = plotColors,pch=20)
+# 
+# dev.off()
+# shell.exec(filenm)
 
 
 # 

@@ -18,7 +18,7 @@ response <- "lachno2"
 which(substr(names(df),1,1)=="A")
 AbsVars <- names(df)[c(61:138,232:240)]
 FlVars <- names(df)[c(17:60,139:231)]
-IVs <- c(AbsVars,FlVars)
+IVs <- c(grep("B",FlVars,invert = TRUE,value = TRUE))
 
 IVs <- c(IVs,c("UW","MC","sinDate","cosDate"))
 penalty.factor <- c(rep(1,length(c(AbsVars,FlVars))),0,0,0,0)
@@ -80,6 +80,10 @@ legend(x="topleft",legend=names(colorOptions),col=colorOptions,pch=20,text.col=c
 #Use Lasso-determined variables in tobit regression for censored values. Use
 #stepwise regression to narrow down the variables further.
 Active.Coef.names
+if("sinDate" %in% Active.Coef.names & !("cosDate" %in% Active.Coef.names)){
+   Active.Coef.names <- c(Active.Coef.names,"cosDate")}
+if("cosDate" %in% Active.Coef.names & !("sinDate" %in% Active.Coef.names)){
+  Active.Coef.names <- c(Active.Coef.names,"sinDate")}
 
 #Tobit regression
 y.orig <- log10(df[selectedRows,response])

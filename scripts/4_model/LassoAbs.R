@@ -18,7 +18,7 @@ response <- "lachno2"
 which(substr(names(df),1,1)=="A")
 AbsVars <- names(df)[c(61:138,232:240)]
 FlVars <- names(df)[c(17:60,139:231)]
-IVs <- c(AbsVars,FlVars)
+IVs <- c(AbsVars)
 
 IVs <- c(IVs,c("UW","MC","sinDate","cosDate"))
 penalty.factor <- c(rep(1,length(c(AbsVars,FlVars))),0,0,0,0)

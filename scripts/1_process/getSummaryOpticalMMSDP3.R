@@ -9,15 +9,18 @@ cached.path <- "cached_data"
 summary.path <- "SummaryVariables"
 summary.save <- "1_SummaryVariables"
 cached.save <- "0_munge"
+processed.path <- "0_ProcessMDLs"
+
 
 checkDups <- function(df,parm){
   df[duplicated(df[,parm]),parm]
 }
 
-# Load summary data, 3-D fluorescence, and absorbance data
+# Load summary data, vectorized fluorescence, and absorbance data
+dfabs <- readRDS(file.path(cached.path,processed.path, "absP3MRLAdjusted.rds"))
+dffl <- readRDS(file.path(cached.path,processed.path, "flP3MRLAdjusted.rds"))
+MMSD3DEEMs <- VectorizedTo3DArray(dffl,"exem", "GRnumber")
 
-load(file.path(raw.path,"PhaseIII","MMSDabsEEMs.RData"))
-load(file.path(raw.path,"PhaseIII","MMSD3DEEMs.RData"))
 load(file.path(raw.path,"PhaseIII","dfOptAnalysisDataMMSDJan2015.RData"))
 dfOpt1 <- dfOptSumAll[,-(which(names(dfOptSumAll)=="OB1"):dim(dfOptSumAll)[2])]
 #dfOpt1$GRnumber %in% names(dfabs)

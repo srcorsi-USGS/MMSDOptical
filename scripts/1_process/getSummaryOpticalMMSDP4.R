@@ -11,6 +11,7 @@ cached.path <- "cached_data"
 summary.path <- "SummaryVariables"
 summary.save <- "1_SummaryVariables"
 cached.save <- "0_munge"
+processed.path <- "0_ProcessMDLs"
 
 checkDups <- function(df,parm){
   df[duplicated(df[,parm]),parm]
@@ -19,29 +20,14 @@ checkDups <- function(df,parm){
 # Load fluorescence and absorbnce data
 
 ##########################################################################
-# dffl <- fread(file.path(raw.path,"PhaseIV","MMSDFlmx4v2.csv"),stringsAsFactors = FALSE)
-# dfabs <- fread('MMSDAbs.csv')
-# ## Generate 3d array of EEMs data ##
-# MMSDP43DEEMs <-VectorizedTo3DArray(df = dffl,ExEm="ex/em",grnum='GRnumber')
-# save(dffl,dfabs,MMSDP43DEEMs,file='MMSDOpticalData.RData')
-# 
-# load('MMSDOpticalData.RData')
-# dfOpt <- read.csv('MMSDOptSummary.csv',stringsAsFactors = FALSE,skip=1)
-# 
-# dfOpt1 <- dfOpt[,-(which(names(dfOpt)=="A254"):dim(dfOpt)[2])]
-
-
 # Load summary data, 3-D fluorescence, and absorbance data
-
-
+# Load summary data, vectorized fluorescence, and absorbance data
 load(file.path(raw.path,"PhaseIV","VirusPhaseIVData.Rdata"))
-load(file.path(raw.path,"PhaseIV","MMSDOpticalData.RData"))
-
-dfabs <- as.data.frame(dfabs) #convert from data.table to data.frame
+dfabs <- readRDS(file.path(cached.path,processed.path, "absP4MRLAdjusted.rds"))
+dffl <- readRDS(file.path(cached.path,processed.path, "flP4MRLAdjusted.rds"))
 
 #Generate 3-D EEMS array
-names(dffl) <- substr(names(dffl),1,7)
-MMSDP43DEEMs <-VectorizedTo3DArray(df = dffl,ExEm="ex/em",grnum='GRnumber')
+MMSDP4DEEMs <- VectorizedTo3DArray(dffl,"exem", "GRnumber")
 
 #Name the wavelength column in the abs file
 names(dfabs)[1] <- "Wavelength"
@@ -84,10 +70,10 @@ ratioOrder <- readRDS(file.path(cached.path,summary.save,"ratioOrder.rds"))
 ######### Add summary variables to summary data frame #######################################
 
 #Fluorescence pairs and means
-dfOpt2 <- getMeanFl(a=MMSDP43DEEMs,signals=dfFlSignals,Peak="Peak",Ex1="Ex1",Ex2="Ex2",Em1="Em1",Em2="Em2",dataSummary=dfOpt1,grnum="GRnumber")
+dfOpt2 <- getMeanFl(a=MMSDP4DEEMs,signals=dfFlSignals,Peak="Peak",Ex1="Ex1",Ex2="Ex2",Em1="Em1",Em2="Em2",dataSummary=dfOpt1,grnum="GRnumber")
 
 #HIX, FI, Freshness 
-dfOpt2 <- getIndexes(a=MMSDP43DEEMs,dataSummary=dfOpt2,grnum="GRnumber")
+dfOpt2 <- getIndexes(a=MMSDP4DEEMs,dataSummary=dfOpt2,grnum="GRnumber")
 
 #Single absorbance signals
 dfOpt2 <- getAbs(dataAbs=dfabs,waveCol="Wavelength",wavs=dfAbsSignals[,1],colSubsetString="gr",dataSummary=dfOpt2,grnum="GRnumber")
