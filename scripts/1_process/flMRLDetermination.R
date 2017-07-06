@@ -132,37 +132,37 @@ legend("topleft",legend = paste("<",c(1:10)/10),col = plotColors,pch=20)
 dev.off()
 shell.exec(filenm)
 
-# Generate plots with original and adjusted values
-filenm <- "flPlotsP4.pdf"
-pdf(filenm)
-par(mfrow=c(2,1))
-for(flCol in sampleGRnums){
-  plot(dffl2[,Wavelength],dffl2[,flCol],
-       type="l",lty=1,col="blue",
-       xlab="Wavelength (nm)",
-       ylab="fluorescence",
-       main = flCol)
-  lines(dffl[,Wavelength],dffl[,flCol],
-        lty=3,col="orange")
-}
-dev.off()
-shell.exec(filenm)
-
-
-#Generate plots of the difference between adjusted and original values
-filenm <- "flDiffPlotsP4.pdf"
-pdf(filenm)
-par(mfrow=c(2,1))
-for(flCol in sampleGRnums){
-  flDiff <- dffl2[,flCol] - dffl[,flCol]
-  plot(dffl2[,Wavelength],flDiff,
-       type="l",lty=1,col="blue",
-       xlab="Wavelength (nm)",
-       ylab="Fluorescence difference",
-       main = flCol)
-}
-dev.off()
-shell.exec(filenm)
+# # Generate plots with original and adjusted values
+# filenm <- "flPlotsP4.pdf"
+# pdf(filenm)
+# par(mfrow=c(2,1))
+# for(flCol in sampleGRnums){
+#   plot(dffl2[,Wavelength],dffl2[,flCol],
+#        type="l",lty=1,col="blue",
+#        xlab="Wavelength (nm)",
+#        ylab="fluorescence",
+#        main = flCol)
+#   lines(dffl[,Wavelength],dffl[,flCol],
+#         lty=3,col="orange")
+# }
+# dev.off()
+# shell.exec(filenm)
+# 
+# 
+# #Generate plots of the difference between adjusted and original values
+# filenm <- "flDiffPlotsP4.pdf"
+# pdf(filenm)
+# par(mfrow=c(2,1))
+# for(flCol in sampleGRnums){
+#   flDiff <- dffl2[,flCol] - dffl[,flCol]
+#   plot(dffl2[,Wavelength],flDiff,
+#        type="l",lty=1,col="blue",
+#        xlab="Wavelength (nm)",
+#        ylab="Fluorescence difference",
+#        main = flCol)
+# }
+# dev.off()
+# shell.exec(filenm)
 
 
 ### Phase 3 data ###
@@ -228,35 +228,35 @@ dev.off()
 shell.exec(filenm)
 
 
-
-# Generate plots with original and adjusted values
-filenm <- "flPlotsP3.pdf"
-pdf(filenm)
-par(mfrow=c(2,1))
-for(flCol in sampleGRnums){
-  plot(dffl2[,Wavelength],dffl2[,flCol],
-       type="l",lty=1,col="blue",
-       xlab="Wavelength (nm)",
-       ylab="Fluorescence",
-       main = flCol)
-  lines(dffl[,Wavelength],dffl[,flCol],
-        lty=3,col="orange")
-}
-dev.off()
-shell.exec(filenm)
-
-
-#Generate plots of the difference between adjusted and original values
-filenm <- "flDiffPlotsP3.pdf"
-pdf(filenm)
-par(mfrow=c(2,1))
-for(flCol in sampleGRnums){
-  flDiff <- dffl2[,flCol] - dffl[,flCol]
-  plot(dffl2[,Wavelength],flDiff,
-       type="l",lty=1,col="blue",
-       xlab="Wavelength (nm)",
-       ylab="Fluorescence difference",
-       main = flCol)
-}
-dev.off()
-shell.exec(filenm)
+# 
+# # Generate plots with original and adjusted values
+# filenm <- "flPlotsP3.pdf"
+# pdf(filenm)
+# par(mfrow=c(2,1))
+# for(flCol in sampleGRnums){
+#   plot(dffl2[,Wavelength],dffl2[,flCol],
+#        type="l",lty=1,col="blue",
+#        xlab="Wavelength (nm)",
+#        ylab="Fluorescence",
+#        main = flCol)
+#   lines(dffl[,Wavelength],dffl[,flCol],
+#         lty=3,col="orange")
+# }
+# dev.off()
+# shell.exec(filenm)
+# 
+# 
+# #Generate plots of the difference between adjusted and original values
+# filenm <- "flDiffPlotsP3.pdf"
+# pdf(filenm)
+# par(mfrow=c(2,1))
+# for(flCol in sampleGRnums){
+#   flDiff <- dffl2[,flCol] - dffl[,flCol]
+#   plot(dffl2[,Wavelength],flDiff,
+#        type="l",lty=1,col="blue",
+#        xlab="Wavelength (nm)",
+#        ylab="Fluorescence difference",
+#        main = flCol)
+# }
+# dev.off()
+# shell.exec(filenm)
