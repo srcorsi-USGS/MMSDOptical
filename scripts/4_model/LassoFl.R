@@ -25,10 +25,11 @@ penalty.factor <- c(rep(1,length(c(AbsVars,FlVars))),0,0,0,0)
 
 sites <- unique(df$abbrev)
 
-selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW"))
+selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW","MF"))
 selectedRows <- which(df$abbrev %in% c("MC","MW","UW"))
 selectedRows <- which(df$abbrev %in% sites)
 selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW","MF","CG","LD"))
+selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW","MF","CG","LD","BK"))
 selectedRows <- which(df$abbrev %in% c("MC","UW","MW"))
 
 x <- as.matrix(df[selectedRows,IVs])
@@ -110,6 +111,44 @@ mtext(paste(glm.family," GLM regression"),side=3,line=2,font=2,cex=1)
 legend(x="topleft",legend=names(colorOptions),col=colorOptions,pch=20,text.col=colorOptions,cex=0.7)
 
 
+
+
+#Plot each of the steps as variables are added
+
+plotModel <- function(m,df,response,selectedRows,colorOptions,plotColors, ...){
+  #Plot stepwise results
+  predictions <- predict(m,newdata = df[selectedRows,])
+  par(mfcol=c(1,1))
+  plot(df[selectedRows,response],predictions,
+       xlab="Observed",ylab="Predicted", col=plotColors,...)
+  abline(0,1)
+  mtext(paste(names(coef(m))[-1],collapse=", "),side=3,line=1,cex=0.8)
+  mtext(paste(i,"-variable model from Tobit/Lasso results",response),side=3,line=3,font=2,cex=1)
+  legend(x="topleft",legend=names(colorOptions),col=colorOptions,pch=20,text.col=colorOptions,cex=0.7)
+}
+
+variables <- names(coef(msurvStep))[-1]
+
+
+filenm <- "plotStepsSensorVarsFlOnly3Sites.pdf"
+modelAIC <- numeric()
+modelRMSE <- numeric()
+pdf(filenm)
+for(i in 1:(length(variables)-2)){
+  
+  form <- formula(paste('y ~',paste(c(variables[1:i],"sinDate","cosDate"),collapse=' + ')))
+  m <- survreg(form,data=dfPredStd,dist='weibull')
+  modelAIC <- c(modelAIC,AIC(m))
+  modelRMSE <- c(modelRMSE,sqrt(mean(resid(m)^2)))
+  plotModel(m=m,df=df,response=response,selectedRows=selectedRows,
+            colorOptions=colorOptions,plotColors=plotColors,
+            pch=20,log="x")
+}
+dev.off()
+shell.exec(filenm)
+
+plot(modelRMSE,col="blue")
+plot(modelAIC,col="forestgreen")
 
 
 

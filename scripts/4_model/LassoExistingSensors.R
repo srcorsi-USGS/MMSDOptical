@@ -14,21 +14,24 @@ cached.save <- "0_munge"
 
 df <- readRDS(file.path(cached.path,summary.save,"dfOptP3P4Combined.rds"))
 
-response <- "lachno2"
+response <- "eColi"
 which(substr(names(df),1,1)=="A")
 AbsVars <- names(df)[c(61:138,232:240)]
 FlVars <- names(df)[c(17:60,139:231)]
-IVs <- c(AbsVars,FlVars)
-
-IVs <- c(IVs,c("UW","MC","sinDate","cosDate"))
-penalty.factor <- c(rep(1,length(c(AbsVars,FlVars))),0,0,0,0)
+write.csv(FlVars,file=file.path(cached.path,summary.save,"FlVars.csv"),row.names = FALSE)
+dfSensors <- read.csv(file=file.path(cached.path,summary.save,"FlVarsSensors.csv"), stringsAsFactors = FALSE)
+sensorVars <- dfSensors[which(dfSensors$Sensor==1),"Variable"]
+IVs <- c(sensorVars,c("UW","MC","sinDate","cosDate"))
+IVs <- c(sensorVars,c("sinDate","cosDate"))
+penalty.factor <- c(rep(1,(length(IVs)-2)),0,0)
 
 sites <- unique(df$abbrev)
 
-selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW"))
+selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW","MF"))
 selectedRows <- which(df$abbrev %in% c("MC","MW","UW"))
 selectedRows <- which(df$abbrev %in% sites)
 selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW","MF","CG","LD"))
+selectedRows <- which(df$abbrev %in% c("HW","MC","MW","UW","MF","CG","LD","BK"))
 selectedRows <- which(df$abbrev %in% c("MC","UW","MW"))
 
 x <- as.matrix(df[selectedRows,IVs])
@@ -38,8 +41,8 @@ glm.family <- "gaussian"
 #glm.family <- "poisson"
 
 foldid <- as.numeric(as.factor(df[selectedRows,"abbrev"])) #use sites as folds
-#mg.cv <- cv.glmnet(x=x, y=y,foldid=foldid,family=glm.family)
-mg.cv <- cv.glmnet(x=x, y=y,nfolds = 10, family=glm.family, penalty.factor=penalty.factor)
+mg.cv <- cv.glmnet(x=x, y=y,foldid=foldid,family=glm.family)
+#mg.cv <- cv.glmnet(x=x, y=y,nfolds = 10, family=glm.family, penalty.factor=penalty.factor)
 mg <- glmnet(x=x, y=y,family=glm.family, penalty.factor=penalty.factor)
 
 # #use lambda with min cross-validated error
@@ -80,6 +83,10 @@ legend(x="topleft",legend=names(colorOptions),col=colorOptions,pch=20,text.col=c
 #Use Lasso-determined variables in tobit regression for censored values. Use
 #stepwise regression to narrow down the variables further.
 Active.Coef.names
+if("sinDate" %in% Active.Coef.names & !("cosDate" %in% Active.Coef.names)){
+   Active.Coef.names <- c(Active.Coef.names,"cosDate")}
+if("cosDate" %in% Active.Coef.names & !("sinDate" %in% Active.Coef.names)){
+  Active.Coef.names <- c(Active.Coef.names,"sinDate")}
 
 #Tobit regression
 y.orig <- log10(df[selectedRows,response])
@@ -107,8 +114,6 @@ legend(x="topleft",legend=names(colorOptions),col=colorOptions,pch=20,text.col=c
 
 
 
-#Plot each of the steps as variables are added
-
 plotModel <- function(m,df,response,selectedRows,colorOptions,plotColors, ...){
   #Plot stepwise results
   predictions <- predict(m,newdata = df[selectedRows,])
@@ -122,28 +127,22 @@ plotModel <- function(m,df,response,selectedRows,colorOptions,plotColors, ...){
 }
 
 variables <- names(coef(msurvStep))[-1]
-variables[2] <- "LT2"
 
-filenm <- "plotStepsSensorVars3Sites.pdf"
 
-modelAIC <- numeric()
-modelRMSE <- numeric()
+selectedRows <- which(!is.na(df[,response]))
+filenm <- "plotStepsSensorVars3SitesEColi.pdf"
 pdf(filenm)
-for(i in 1:(length(variables)-2)){
-  
-  form <- formula(paste('y ~',paste(c(variables[1:i],"sinDate","cosDate"),collapse=' + ')))
-  m <- survreg(form,data=dfPredStd,dist='weibull')
-  modelAIC <- c(modelAIC,AIC(m))
-  modelRMSE <- c(modelRMSE,sqrt(mean(resid(m)^2)))
-  plotModel(m=m,df=df,response=response,selectedRows=selectedRows,
-            colorOptions=colorOptions,plotColors=plotColors,
-            pch=20,log="x")
+for(i in 1:length(variables)){
+form <- formula(paste('y ~',paste(c(variables[1:i]),collapse=' + ')))
+y <- Surv(log10(df[selectedRows,response]), df[selectedRows,response]>225, type="left")
+m <- survreg(form,data=df,dist='weibull')
+plotColors <- colorOptions[df[selectedRows,"abbrev"]]
+plotModel(m=m,df=df,response=response,selectedRows=selectedRows,
+          colorOptions=colorOptions,plotColors=plotColors,
+          pch=20,log="x")
 }
 dev.off()
 shell.exec(filenm)
-
-plot(modelRMSE,col="blue")
-plot(modelAIC,col="forestgreen")
 
 
 #For the Gaussian regression, transform back to real space and graph with log axis
@@ -153,5 +152,4 @@ plot(modelAIC,col="forestgreen")
 # smear.coef <- sum(10^(mg.residuals))/length(mg.residuals)
 # LD <- 10^(predict(mg,newx=IVmatrix, s = mg.cv$lambda.min,type="response"))*smear.coef
 # 
-
 
