@@ -14,7 +14,7 @@ cached.save <- "0_munge"
 
 df <- readRDS(file.path(cached.path,summary.save,"dfOptP3P4Combined.rds"))
 
-response <- "eColi"
+response <- "bacHum"
 which(substr(names(df),1,1)=="A")
 AbsVars <- names(df)[c(61:138,232:240)]
 FlVars <- names(df)[c(17:60,139:231)]
@@ -130,7 +130,7 @@ variables <- names(coef(msurvStep))[-1]
 
 
 selectedRows <- which(!is.na(df[,response]))
-filenm <- "plotStepsSensorVars3SitesEColi.pdf"
+filenm <- "plotStepsSensorVars3SitesBacHum.pdf"
 pdf(filenm)
 for(i in 1:length(variables)){
 form <- formula(paste('y ~',paste(c(variables[1:i]),collapse=' + ')))
