@@ -171,3 +171,18 @@ summary(m)
 pred <- predict(m,newdata = df)
 plot(df$bacHum~pred,log="y",col=plotColors,pch=20)
 
+
+# E Coli model
+
+df$logEcoli <- log10(df$eColi)
+response <- "logEcoli"
+
+m <- lm(logEcoli ~  T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
+summary(m)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
