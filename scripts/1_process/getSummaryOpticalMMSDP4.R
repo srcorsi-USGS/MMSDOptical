@@ -8,6 +8,7 @@ library(tidyr)
 #set data directories
 raw.path <- "raw_data"
 cached.path <- "cached_data"
+munge.path <- "0_munge"
 summary.path <- "SummaryVariables"
 summary.save <- "1_SummaryVariables"
 cached.save <- "0_munge"
@@ -22,7 +23,7 @@ checkDups <- function(df,parm){
 ##########################################################################
 # Load summary data, 3-D fluorescence, and absorbance data
 # Load summary data, vectorized fluorescence, and absorbance data
-load(file.path(raw.path,"PhaseIV","VirusPhaseIVData.Rdata"))
+df <- readRDS(file.path(cached.path,munge.path,"VirusPhaseIVData.rds"))
 dfabs <- readRDS(file.path(cached.path,processed.path, "absP4MRLAdjusted.rds"))
 dffl <- readRDS(file.path(cached.path,processed.path, "flP4MRLAdjusted.rds"))
 

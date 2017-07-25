@@ -1,4 +1,4 @@
-#LassoOpticalRegressions
+#Test regressions with common optical signals
 
 library(glmnet)
 library(smwrBase)
@@ -177,7 +177,7 @@ plot(df$bacHum~pred,log="y",col=plotColors,pch=20)
 df$logEcoli <- log10(df$eColi)
 response <- "logEcoli"
 
-m <- lm(logEcoli ~  T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
+m <- lm(logEcoli ~ T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
 summary(m)
 selectedRows <- c(1:dim(df)[1])
 plotColors <- colorOptions[df[,"abbrev"]]
