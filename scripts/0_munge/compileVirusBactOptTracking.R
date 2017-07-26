@@ -12,7 +12,7 @@ sumNAs <- function(x) sum(is.na(x))
 #set data directories
 raw.path <- "raw_data"
 cached.path <- "cached_data"
-cached.save <- "1_munge"
+cached.save <- "0_munge"
 
 ########################
 #UWM Bacteria data
@@ -207,14 +207,14 @@ dfCheck <- dfmerge[which(dfmerge$GRnumber %in% dfOptNotIncluded$GRnumber),]
 # change Rdata to rds in the filenames
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 write.csv(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.csv'),row.names=FALSE)
-saveRDS(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.Rdata'))
+saveRDS(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.rds'))
 
 write.csv(dfQA,file=file.path(cached.path,cached.save,'QAVirusPhaseIVData.csv'),row.names=FALSE)
-saveRDS(dfQA,file=file.path(cached.path,cached.save,'QAVirusPhaseIVData.Rdata'))
+saveRDS(dfQA,file=file.path(cached.path,cached.save,'QAVirusPhaseIVData.rds'))
 
 write.csv(dfWW,file=file.path(cached.path,cached.save,'WWVirusPhaseIVData.csv'),row.names=FALSE)
-saveRDS(dfWW,file=file.path(cached.path,cached.save,'WWVirusPhaseIVData.Rdata'))
+saveRDS(dfWW,file=file.path(cached.path,cached.save,'WWVirusPhaseIVData.rds'))
 
 write.csv(dfWA,file=file.path(cached.path,cached.save,'WAMADVirusPhaseIVData.csv'),row.names=FALSE)
-saveRDS(dfWA,file=file.path(cached.path,cached.save,'WAMADVirusPhaseIVData.Rdata'))
+saveRDS(dfWA,file=file.path(cached.path,cached.save,'WAMADVirusPhaseIVData.rds'))
 

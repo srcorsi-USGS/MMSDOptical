@@ -14,7 +14,7 @@ munge.path <- "0_munge"
 process.path <- "1_process"
 
 #Munge
-source(file.path(script.path,"compileVirusBactOptTracking.R"))
+source(file.path(script.path,munge.path,"compileVirusBactOptTracking.R"))
 
 #Process
 ##Determine censored values based on minimum reporting levels

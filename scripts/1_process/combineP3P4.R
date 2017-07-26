@@ -12,10 +12,10 @@ cached.save <- "0_munge"
 dfP3 <- readRDS(file.path(cached.path,summary.save,"dfOptSummaryMMSDP3.rds"))
 dfP4 <- readRDS(file.path(cached.path,summary.save,"dfOptSummaryMMSDP4.rds"))
 
-dfP4$psdate <- as.POSIXct(dfP4$Start.date.time..mm.dd.yy.hh.mm., format= "%m/%d/%Y %H:%M", tz = 'Etc/GMT-6')
-dfP4$pedate <- as.POSIXct(dfP4$End.date.time..mm.dd.yy.hh.mm., format= "%m/%d/%Y %H:%M", tz = 'Etc/GMT-6')
-dfP3$psdate <- as.POSIXct(format(as.POSIXct(dfP3$psdate),tz='Etc/GMT-6',usetz=TRUE),tz='Etc/GMT-6')
-dfP3$pedate <- as.POSIXct(format(as.POSIXct(dfP3$pedate),tz='Etc/GMT-6',usetz=TRUE),tz='Etc/GMT-6')
+dfP4$psdate <- as.POSIXct(dfP4$Start.date.time..mm.dd.yy.hh.mm., format= "%m/%d/%Y %H:%M", tz = 'Etc/GMT+6')
+dfP4$pedate <- as.POSIXct(dfP4$End.date.time..mm.dd.yy.hh.mm., format= "%m/%d/%Y %H:%M", tz = 'Etc/GMT+6')
+dfP3$psdate <- as.POSIXct(format(as.POSIXct(dfP3$psdate),tz='Etc/GMT+6',usetz=TRUE),tz='Etc/GMT+6')
+dfP3$pedate <- as.POSIXct(format(as.POSIXct(dfP3$pedate),tz='Etc/GMT+6',usetz=TRUE),tz='Etc/GMT+6')
 
 #names(dfP3)[which(names(dfP3) == "Abb")]
 
