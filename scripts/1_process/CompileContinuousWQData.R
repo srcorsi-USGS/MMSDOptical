@@ -1,3 +1,5 @@
+#THIS SCRIPT NOT USED YET. Data was retrieved from Aquarius instead of NWIS web
+
 # Gather information from continuous water quality sensors for matching with
 # optical and bacteria data
 

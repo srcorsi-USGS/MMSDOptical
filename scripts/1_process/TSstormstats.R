@@ -1,11 +1,3 @@
-df <- dfWQ;date<-"pdate";varname<-"Value";dates<-df.orig;
-starttime<-"psdate";endtime<-"pedate";
-stats.return <- c("mean","median","max","min");
-subdfvar<-"STAID";subdfvalue<-sites[i];
-subdatesvar<-"abbrev";subdatesvalue<-site;
-out.varname <- parm
-
-
 
 TSstormstats <- function (df, date = "pdate", varname, dates, starttime = "Ebpdate", 
           endtime = "Eepdate", stats.return = c("mean"), subdfvar = "", 
