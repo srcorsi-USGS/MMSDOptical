@@ -23,13 +23,15 @@ summary.path <- "SummaryVariables"
 summary.save <- "1_SummaryVariables"
 cached.save <- "0_munge"
 
-df <- readRDS(file.path(cached.path,summary.save,"dfOptP3P4Combined.rds"))
+df <- readRDS(file.path(cached.path,summary.save,"dfOptP3P4CombinedContWQ.rds"))
 df.orig <- df
 df$CSOVol <- 0
 df[which(df$GRnumber=="gr15841"),"CSOVol"] <- 594.7
 df[which(df$GRnumber=="gr15887"),"CSOVol"] <- 524.9
 df[which(df$GRnumber=="gr17417"),"CSOVol"] <- 341.2
 df$CSO <- ifelse(df$CSOVol > 0,1,0)
+df$loglachno2 <- log10(df$lachno2)
+df$logEcoli <- log10(df$eColi)
 
 response <- "lachno2"
 df$logResponse <- log10(df[,response])
@@ -50,6 +52,7 @@ selectedSites <- c("HW","MC","MW","UW")
 selectedSites <- c("MC","MW","UW")
 selectedSites <- sites
 selectedSites <- c("HW","MC","MW","UW","MF","CG","LD")
+selectedSites <- c("HW","MC","MW","UW","MF","LD")
 selectedSites <- c("MC","UW","MW")
 selectedRows <- which(df$abbrev %in% selectedSites)
 
@@ -61,7 +64,7 @@ colorOptions <- c("orange","yellow2","skyblue","black","springgreen4","blue","gr
 names(colorOptions) <- unique(df$abbrev)
 selectedSiteColors <- colorOptions[selectedSites]
 
-df <- df.orig[selectedRows,]
+df <- df[selectedRows,]
 plotColors <- colorOptions[df[selectedRows,"abbrev"]]
 
 
@@ -138,7 +141,7 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
           colorOptions = selectedSiteColors,plotColors = plotColors,
           pch=20)
 
-# 2. without the CSO variable
+# 3. without the CSO variable
 
 m <- lm(log10(lachno2)~ rS2.25_S3.25*sinDate + rS2.25_S3.25*cosDate + S3.25*sinDate + S3.25*cosDate + MC + UW, data = df)
 summary(m)
@@ -150,6 +153,16 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
           colorOptions = selectedSiteColors,plotColors = plotColors,
           pch=20)
 
+# 4. Add water quality variables to model #1
+
+m <- lm(log10(lachno2)~ Water_Temperature_mean  + CSO + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
+summary(m)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
 
 
 m <- lm(log10(lachno2)~ A440*sinDate + A440*cosDate + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)

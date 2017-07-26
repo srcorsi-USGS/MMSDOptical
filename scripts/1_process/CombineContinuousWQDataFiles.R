@@ -1,5 +1,5 @@
-# Gather information from continuous water quality sensors for matching with
-# optical and bacteria data
+# Combine individual files from Aquarius to result in one file per parameter with
+# all sites inclued. 
 
 library(dataRetrieval)
 library(dplyr)

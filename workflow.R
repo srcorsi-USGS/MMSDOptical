@@ -28,6 +28,11 @@ source(file.path(script.path,process.path,"getSummaryOpticalMMSDP4.R"))
 ##Combine summary optical variables from P3 and P4 into one dataframe for modeling
 source(file.path(script.path,process.path,"combineP3P4.R"))
 
+#Add in continuous WQ variables
+#First combine individual files into one file per parameter
+source(file.path(script.path,process.path,"CombinedIndividualWQParms.R"))
+#Next add WQ data to combined P3 and P4 data
+source(file.path(script.path,process.path,"AddContinuousWQData2.R"))
 
 
 
