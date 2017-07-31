@@ -1,5 +1,5 @@
-# Combine individual files from Aquarius to result in one file per parameter with
-# all sites inclued. 
+# Combine files from individual sites from Aquarius to result in one file per parameter with
+# all sites included. 
 
 library(dataRetrieval)
 library(dplyr)

@@ -131,7 +131,7 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
 
 # 2. Potential final model, but it contains the CSO variable
 
-m <- lm(log10(lachno2)~CSO + rS2.25_S3.25*sinDate + rS2.25_S3.25*cosDate + S3.25*sinDate + S3.25*cosDate + MC + UW, data = df)
+m <- lm(log10(lachno2)~CSO + Turbidity_mean + rS2.25_S3.25*sinDate + rS2.25_S3.25*cosDate + S3.25*sinDate + S3.25*cosDate + MC + UW, data = df)
 summary(m)
 
 selectedRows <- c(1:dim(df)[1])
@@ -143,7 +143,7 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
 
 # 3. without the CSO variable
 
-m <- lm(log10(lachno2)~ rS2.25_S3.25*sinDate + rS2.25_S3.25*cosDate + S3.25*sinDate + S3.25*cosDate + MC + UW, data = df)
+m <- lm(log10(lachno2)~ Turbidity_mean + rS2.25_S3.25*sinDate + rS2.25_S3.25*cosDate + S3.25*sinDate + S3.25*cosDate + MC + UW, data = df)
 summary(m)
 
 selectedRows <- c(1:dim(df)[1])
@@ -155,7 +155,22 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
 
 # 4. Add water quality variables to model #1
 
-m <- lm(log10(lachno2)~ Water_Temperature_mean  + CSO + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
+m <- lm(log10(lachno2)~ Turbidity_mean  + CSO + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
+summary(m)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+###############
+
+
+### Test water quality without optical
+
+m <- lm(log10(lachno2)~ CSO + Turbidity_mean + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
 summary(m)
 selectedRows <- c(1:dim(df)[1])
 plotColors <- colorOptions[df[,"abbrev"]]

@@ -21,8 +21,7 @@ names(sites) <- c("MF","LD","UW","HW","MW","MC","CG","BK")
 # parms <- c("00060","00095","00300","00010","63680")
 # names(parms) <- c("Q","SC","DO","WT","Turbidity")
 parmNames <- c("Discharge","Dissolved_oxygen","Specific_cond","Turbidity","Water_Temperature")
-j <- 1
-i <- 2
+
 dfSum <- df
 
 #Add summary stats for each continuous water quality varible
@@ -30,11 +29,11 @@ for(j in c(1,2,3,4,5)){
   parm <- parmNames[j]
   
   #Read UV data file
+  filenm <- paste0(parm,"AllSites.rds")
   dfWQ <- readRDS(file.path(cached.path,munge.path, WQ.path,filenm))
   dfList <- list()
   for(i in 1:6){
     site <- names(sites[i])
-    filenm <- paste0(parm,"AllSites.rds")
     subdf <- subset(dfWQ,STAID == sites[i])
     subdfSum <- subset(dfSum,abbrev==names(sites[i]))
 
