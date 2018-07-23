@@ -105,6 +105,10 @@ dfTracking <- dfTracking[dfTracking$abbrev %in% names(Sites),]
 samples <- apply(dfTracking[,c("Virus.Sample.","Optics.DOC.Sample.", "GLWI.Sample.")],1,sum,na.rm=TRUE)
 dfTracking <- dfTracking[which(samples>0),]
 
+#add hydro condition
+dfTracking$hydro_condition <- ifelse(dfTracking$Event ==1,"event",NA)
+dfTracking[which(dfTracking$Baseflow ==1),"hydro_condition"] <- "baseflow"
+
 ###############################
 # Merge all bacteria, virus, optical and sample tracking into one dataframe
 
