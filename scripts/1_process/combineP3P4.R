@@ -30,6 +30,8 @@ names(dfP3)[names(dfP3) %in% "Human_virus"] <- "humanVirus"
 dfP3$abbrev <- as.character(dfP3$abbrev)
 dfP3$OMabs_dilution <- as.character(dfP3$OMabs_dilution)
 
+dfP3$hydro_condition <- as.character(dfP3$Sample_Event)
+dfP4$hydro_condition <- Hmisc::capitalize(dfP4$hydro_condition)
 names(dfP4)[names(dfP4) %in% "lachno"] <- "lachno2"
 
 
