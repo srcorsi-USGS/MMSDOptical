@@ -18,8 +18,8 @@ source(file.path(script.path,munge.path,"compileVirusBactOptTracking.R"))
 
 #Process
 ##Determine censored values based on minimum reporting levels
-source(file.path(script.path,process.path,"absMRLDetermination.R"))
-source(file.path(script.path,process.path,"flMRLDetermination.R"))
+#source(file.path(script.path,process.path,"absMRLDetermination.R"))
+#source(file.path(script.path,process.path,"flMRLDetermination.R"))
 
 ##Determine summary optical variables
 source(file.path(script.path,process.path,"getSummaryOpticalMMSDP3.R"))
@@ -30,7 +30,7 @@ source(file.path(script.path,process.path,"combineP3P4.R"))
 
 #Add in continuous WQ variables
 #First combine individual files into one file per parameter
-source(file.path(script.path,process.path,"CombinedIndividualWQParms.R"))
+source(file.path(script.path,process.path,"CombineIndividualWQParms.R"))
 #Next add WQ data to combined P3 and P4 data
 source(file.path(script.path,process.path,"AddContinuousWQData2.R"))
 
