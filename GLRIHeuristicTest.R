@@ -19,7 +19,7 @@ plotModel_png <- function(m,df,response,selectedRows,colorOptions,plotColors, ..
   predictions <- predict(m,newdata = df[selectedRows,])
   par(mfcol=c(1,1))
   plot(df[selectedRows,response],predictions,
-       xlab="",ylab="", col=plotColors, las=1, cex.axis=1.4,...)
+       xlab="",ylab="", col=plotColors, las=1, cex=1.4,cex.axis=1.4,...)
   abline(0,1)
   mtext("Predicted (CN/100ml)",side=2,line=3,cex=1.4)
   mtext("Observed (CN/100ml)",side=1,line=3,cex=1.4)
@@ -128,6 +128,33 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
           colorOptions = selectedSiteColors,plotColors = plotColors,
           pch=20)
 
+### All sites with LASSO variables plus site variables
+df <- df.all.sites
+m <- lm(logBachum ~   A280 + HIX_2002 + Sag275_290 + Sag350_400*sinDate + Sag350_400*cosDate + MKE + RO + CL + RA + PO + MA, data = df)
+summary(m)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+response <- "logBachum"
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+## USE THIS IN PRESENTATION 7/24/2018 ###*****
+#Stepwise from here
+m2<-step(m,k=log(nrow(df)))
+summary(m2)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+response <- "logBachum"
+
+png("cached_data/2_visualize/LassoVarsAllSites.png",width=900,height=600)
+plotModel_png(m=m2,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+dev.off()
 
 ###### Most urban sites: Cl, RO
 df <- df.all.sites[df.all.sites$LandUse %in% c("urban"),]
@@ -144,7 +171,51 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
           pch=20)
 
 
-m <- lm(logBachum ~  rF_T + T*sinDate + T*cosDate + F*sinDate + F*cosDate + Man + MKE + RO + CL + RA + PO + MA, data = df)
+m <- lm(logBachum ~  rS3.25_S1.25 + T*sinDate + T*cosDate + F*sinDate + F*cosDate + Man + MKE + RO + CL + RA + PO + MA, data = df)
+summary(m)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+response <- "logBachum"
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+### CL and RO with LASSO variables + season + plus site variables
+
+df <- df.all.sites[df.all.sites$LandUse %in% c("urban"),]
+
+m <- lm(logBachum ~   A280 + HIX_2002 + Sag275_290*sinDate + Sag275_290*cosDate + Sag350_400  +  CL , data = df)
+summary(m)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+response <- "logBachum"
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+#Stepwise from here
+m2<-step(m,k=log(nrow(df)))
+summary(m2)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+response <- "logBachum"
+
+plotModel(m=m2,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+
+
+m <- lm(logBachum ~  Sag350_400 + A280*sinDate + A280*cosDate + Sag275_290*sinDate + Sag275_290*cosDate + CL , data = df)
+
+m <- lm(logBachum ~  Sag350_400 + A280 + D + df$HIX_2002* + Sag275_290*sinDate + Sag275_290*cosDate + CL , data = df)
+
 summary(m)
 selectedRows <- c(1:dim(df)[1])
 plotColors <- colorOptions[df[,"abbrev"]]
@@ -156,12 +227,11 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
           pch=20)
 
 
-
 ###### Most urban sites with just the low bachum values: Cl, RO
 df <- df.all.sites[df.all.sites$LandUse %in% c("urban"),]
 df <- subset(df,logBachum < 4)
 
-m <- lm(logBachum ~  rF_T + T*sinDate + T*cosDate + F*sinDate + F*cosDate + CL + RO, data = df)
+m <- lm(logBachum ~  T*sinDate + T*cosDate + F*sinDate + F*cosDate + CL , data = df)
 summary(m)
 selectedRows <- c(1:dim(df)[1])
 plotColors <- colorOptions[df[,"abbrev"]]
@@ -189,20 +259,23 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
           pch=20)
 
 
-df <- df.all.sites[df.all.sites$abbrev %in% c("MA","PO"),]
+df <- df.all.sites[df.all.sites$abbrev %in% c("MA","PO","RM"),]
 unique(df$abbrev)
+selectedSiteColors <- colorOptions[unique(df$abbrev)]
 
-m <- lm(logBachum ~  rF_T + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MA , data = df)
+
+m <- lm(logBachum ~  T*sinDate + T*cosDate + F*sinDate + F*cosDate + MA + PO  , data = df)
 summary(m)
 selectedRows <- c(1:dim(df)[1])
 plotColors <- colorOptions[df[,"abbrev"]]
 
 response <- "logBachum"
 
-plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+png("cached_data/2_visualize/PO_MA_T_F_season_regression.png",width=900,height=600)
+plotModel_png(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
           colorOptions = selectedSiteColors,plotColors = plotColors,
           pch=20)
-predict(m,newdata = df)
+dev.off()
 
 
 ##### WI Ag sites: Manitowoc has very low concentration and lots of non-detects
