@@ -30,6 +30,7 @@ load(file.path(raw.path,"PhaseIV","MMSDOpticalData.RData"))
 dfOptSum <- df
 df <- read.csv(file.path(raw.path,"PhaseIV","MMSDOptSummary.csv"),skip=1,stringsAsFactors = FALSE)
 names(dfabs)[1] <- Wavelength
+dfabs <- as.data.frame(dfabs)
 
 #Define GRnumbers for environmental samples in filtered summary file
 sampleGRnums <- dfOptSum[which(!is.na(dfOptSum[,GRnumber])),"GRnumber"]
@@ -52,6 +53,8 @@ absList <- optMRLAdjust(dfabs,dfMRLs,Wavelength,sampleGRnums)
 
 #DF of adjusted abs values
 dfabs2 <- absList[[1]]
+
+dir.create(file.path(cached.path,cached.save), showWarnings = FALSE)
 
 saveRDS(dfabs2,file=file.path(cached.path,cached.save,"absP4MRLAdjusted.rds"))
 saveRDS(absList[[2]],file=file.path(cached.path,cached.save,"absP4withRemarks.rds"))
@@ -78,7 +81,7 @@ for(absCol in sampleGRnums){
         lty=3,col="orange")
 }
 dev.off()
-shell.exec(filenm)
+#shell.exec(filenm)
 
 
 #Generate plots of the difference between adjusted and original values
@@ -94,7 +97,7 @@ for(absCol in sampleGRnums){
        main = absCol)
 }
 dev.off()
-shell.exec(filenm)
+#shell.exec(filenm)
 
 
 ### Phase 3 data ###
@@ -133,7 +136,7 @@ for(absCol in sampleGRnums){
         lty=3,col="orange")
 }
 dev.off()
-shell.exec(filenm)
+#shell.exec(filenm)
 
 
 #Generate plots of the difference between adjusted and original values
@@ -149,4 +152,4 @@ for(absCol in sampleGRnums){
        main = absCol)
 }
 dev.off()
-shell.exec(filenm)
+#shell.exec(filenm)

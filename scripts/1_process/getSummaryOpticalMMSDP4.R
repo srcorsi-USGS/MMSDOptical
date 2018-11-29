@@ -62,7 +62,7 @@ ratioSignalsSr <- ratioSignalsSr[which(ratioSignalsSr[2]>0),1]
 ratioSignalsSniff <- read.csv(paste(SummaryDir,"ratioSignalsSniff.csv",sep=""),as.is=TRUE)
 ratioSignalsSniff <- ratioSignalsSniff[which(ratioSignalsSniff[2]>0),1]
 logSignals <- read.csv(paste(SummaryDir,"logSignals.csv",sep=""),as.is=TRUE)[,1]
-ratioOrder <- readRDS(file.path(cached.path,summary.save,"ratioOrder.rds"))
+ratioOrder <- readRDS(paste0(SummaryDir,"ratioOrder.rds"))
 
 
 # Add summary variables to summary data frame

@@ -73,17 +73,6 @@ dfOptSum <- read.csv(file.path(raw.path,"PhaseIV","MMSDOptSummary.csv"),stringsA
 dfOptSum$FieldExpID <- gsub(" ", "", dfOptSum$FieldExpID, fixed = TRUE)
 dfOptSum$FieldExpID <- gsub("-", "", dfOptSum$FieldExpID, fixed = TRUE)
 
-
-dfLeftOut <- dfOptSum[!dfOptSum$FieldExpID  %in% dfmerge$Sample.ID,]
-
-dfLeftOut2 <- dfOptSum[!dfmerge$Sample.ID %in%  dfOptSum$FieldExpID,]
-
-
-# QARows <- multiGrep2(c('Blank','Replicate'),dfmerge$Comments,ignore.case = TRUE,)
-# dfQA <- dfmerge[QARows,]
-# df <- dfmerge[-QARows,]
-
-
 ########################
 # Sample tracking data
 dfTracking <- read.csv(file.path(raw.path,"PhaseIV","Sample tracking.csv"),stringsAsFactors = FALSE)
@@ -120,7 +109,14 @@ dfmerge <- merge(dfmerge, dfOptSum, by.x="Sample.ID", by.y="FieldExpID", all=TRU
 # merge mergeddf and tracking data
 dfmerge <- merge(dfTracking,dfmerge,  by="Sample.ID", all=TRUE)
 
+# dfLeftOut <- dfOptSum[!dfOptSum$FieldExpID  %in% dfmerge$Sample.ID,]
+# 
+# dfLeftOut2 <- dfOptSum[!dfmerge$Sample.ID %in%  dfOptSum$FieldExpID,]
 
+
+# QARows <- multiGrep2(c('Blank','Replicate'),dfmerge$Comments,ignore.case = TRUE,)
+# dfQA <- dfmerge[QARows,]
+# df <- dfmerge[-QARows,]
 #################################################
 #Check for consistency in data availability
 
@@ -208,8 +204,11 @@ dfCheck <- dfmerge[which(dfmerge$GRnumber %in% dfOptNotIncluded$GRnumber),]
 # All missing samples are QA. Looks like all optical samples made it through
 
 
-# change Rdata to rds in the filenames
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+#Write files
+dir.create(cached.path, showWarnings = FALSE)
+dir.create(file.path(cached.path,cached.save), showWarnings = FALSE)
+
 write.csv(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.csv'),row.names=FALSE)
 saveRDS(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.rds'))
 

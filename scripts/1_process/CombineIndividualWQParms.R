@@ -12,6 +12,8 @@ summary.path <- "SummaryVariables"
 summary.save <- "1_SummaryVariables"
 cached.save <- "0_munge"
 
+dir.create(file.path(cached.path,cached.save,WQ.path),showWarnings = FALSE)
+
 df <- readRDS(file.path(cached.path,summary.save,"dfOptP3P4Combined.rds"))
 df.orig <- df
 

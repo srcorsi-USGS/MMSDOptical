@@ -30,6 +30,7 @@ load(file.path(raw.path,"PhaseIV","MMSDOpticalData.RData"))
 dfOptSum <- df
 df <- read.csv(file.path(raw.path,"PhaseIV","MMSDOptSummary.csv"),skip=1,stringsAsFactors = FALSE)
 names(dffl)[1] <- Wavelength
+dffl <- as.data.frame(dffl)
 
 #truncate column names at 7 characters to match GR numbers.
 names(dffl) <- substr(names(dffl),1,7)
