@@ -26,6 +26,7 @@ names(dfP3)[names(dfP3) %in% "lachnocen"] <- "lachno2"
 names(dfP3)[names(dfP3) %in% "Entero.CN.100ml"] <- "ent"
 names(dfP3)[names(dfP3) %in% "E..coli.CFU.100ml"] <- "eColi"
 names(dfP3)[names(dfP3) %in% "Human_virus"] <- "humanVirus"
+names(dfP3)[names(dfP3) %in% "GLWI.FT"] <- "FT"
 
 dfP3$abbrev <- as.character(dfP3$abbrev)
 dfP3$OMabs_dilution <- as.character(dfP3$OMabs_dilution)
