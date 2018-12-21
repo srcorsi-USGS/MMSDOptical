@@ -208,8 +208,7 @@ dfCheck <- dfmerge[which(dfmerge$GRnumber %in% dfOptNotIncluded$GRnumber),]
 # All missing samples are QA. Looks like all optical samples made it through
 
 
-# change Rdata to rds in the filenames
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#write files
 write.csv(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.csv'),row.names=FALSE)
 saveRDS(df,file=file.path(cached.path,cached.save,'VirusPhaseIVData.rds'))
 
