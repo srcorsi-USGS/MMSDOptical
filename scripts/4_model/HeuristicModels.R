@@ -58,8 +58,8 @@ response <- paste0("log",response)
 names(df)[dim(df)[2]] <- response
 
 which(substr(names(df),1,1)=="A")
-AbsVars <- names(df)[c(61:138,232:240)] #define which variables are from Abs spectra 63:80, 120:130
-FlVars <- names(df)[c(17:60,139:231)]   #define which variables are from Fl spectra: 17:62, 81:119
+AbsVars <- names(df)[c(63:80,120:130)] #define which variables are from Abs spectra 63:80, 120:130
+FlVars <- names(df)[c(17:62,81:119)]   #define which variables are from Fl spectra: 17:62, 81:119
 IVs <- c(grep("B",FlVars,invert = TRUE,value = TRUE))
 
 IVs <- c(IVs,c("UW","MC","sinDate","cosDate"))
@@ -155,14 +155,15 @@ plotModel_png(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
 dev.off()
 shell.exec(filenm)
 
-#Alternative with flow at 16th interation with date **** TRY USING AN ANTECEDENT BASEFLOW VARIABLE FOR 16TH.
-m <- lm(log10(lachno2)~ (Discharge_max_DA*MC):sinDate + (Discharge_max_DA*MC):cosDate + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
+#To avoid CSO term: Alternative with flow at 16th interaction with date **** TRY USING AN ANTECEDENT BASEFLOW VARIABLE FOR 16TH. Still does not work great without CSO term...
+dfq <- subset(df,!is.infinite(Discharge_max_DA))
+m <- lm(log10(lachno2)~ (Discharge_max_DA*MC):sinDate + (Discharge_max_DA*MC):cosDate + T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = dfq)
 summary(m)
 
 selectedRows <- c(1:dim(df)[1])
-plotColors <- colorOptions[df[,"abbrev"]]
+plotColors <- colorOptions[dfq[,"abbrev"]]
 
-plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+plotModel(m=m,df=dfq,response=response,selectedRows = c(1:dim(df)[1]),
           colorOptions = selectedSiteColors,plotColors = plotColors,
           pch=20)
 

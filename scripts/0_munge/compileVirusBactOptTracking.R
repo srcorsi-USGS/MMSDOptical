@@ -74,9 +74,9 @@ dfOptSum$FieldExpID <- gsub(" ", "", dfOptSum$FieldExpID, fixed = TRUE)
 dfOptSum$FieldExpID <- gsub("-", "", dfOptSum$FieldExpID, fixed = TRUE)
 
 
-dfLeftOut <- dfOptSum[!dfOptSum$FieldExpID  %in% dfmerge$Sample.ID,]
+#dfLeftOut <- dfOptSum[!dfOptSum$FieldExpID  %in% dfmerge$Sample.ID,]
 
-dfLeftOut2 <- dfOptSum[!dfmerge$Sample.ID %in%  dfOptSum$FieldExpID,]
+#dfLeftOut2 <- dfOptSum[!dfmerge$Sample.ID %in%  dfOptSum$FieldExpID,]
 
 
 # QARows <- multiGrep2(c('Blank','Replicate'),dfmerge$Comments,ignore.case = TRUE,)
