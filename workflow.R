@@ -18,8 +18,8 @@ source(file.path(script.path,munge.path,"compileVirusBactOptTracking.R"))
 
 #Process
 ##Determine censored values based on minimum reporting levels
-#source(file.path(script.path,process.path,"absMRLDetermination.R"))
-#source(file.path(script.path,process.path,"flMRLDetermination.R"))
+source(file.path(script.path,process.path,"absMRLDetermination.R"))
+source(file.path(script.path,process.path,"flMRLDetermination.R"))
 
 ##Determine summary optical variables
 source(file.path(script.path,process.path,"getSummaryOpticalMMSDP3.R"))
