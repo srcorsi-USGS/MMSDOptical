@@ -58,8 +58,9 @@ response <- paste0("log",response)
 names(df)[dim(df)[2]] <- response
 
 which(substr(names(df),1,1)=="A")
-AbsVars <- names(df)[c(63:80,120:130)] #define which variables are from Abs spectra 63:80, 120:130
-FlVars <- names(df)[c(17:62,81:119)]   #define which variables are from Fl spectra: 17:62, 81:119
+AbsVars <- names(df)[c(64:141, 236:246)] #define which variables are from Abs spectra 64:141, 236:246
+FlVars <- names(df)[c(18:63,142:235)]   #define which variables are from Fl spectra: 17:62, 81:119
+VarsSensors <- c("S1.25","S2.25","S3.25","T","C","F","A254","A295","A350","A400","CSO","UW","MC","sinDate","cosDate")
 IVs <- c(grep("B",FlVars,invert = TRUE,value = TRUE))
 
 IVs <- c(IVs,c("UW","MC","sinDate","cosDate"))
@@ -301,7 +302,7 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
 test <- df[which(df$lachno2 > 3e+05),]
 
 
-m <- lm(log10(lachno2)~ df$Sag290_350 + df$B + df$HIX_2002*sinDate + T*cosDate, data = df)
+m <- lm(log10(lachno2)~ df$Sag290_350 + df$B + df$HIX_2002*sinDate + T*cosDate + MC + UW + CSO, data = df)
 summary(m)
 pred <- predict(m,newdata = df)
 plot(df$bacHum~pred,log="y",col=plotColors,pch=20)
@@ -312,12 +313,109 @@ plot(df$bacHum~pred,log="y",col=plotColors,pch=20)
 df$logEcoli <- log10(df$eColi)
 response <- "logEcoli"
 
-m <- lm(logEcoli ~ T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW, data = df)
+m <- lm(logEcoli ~ T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW + CSO, data = df)
 summary(m)
 selectedRows <- c(1:dim(df)[1])
 plotColors <- colorOptions[df[,"abbrev"]]
 
 plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+# Enterococci model
+
+df$logEnt <- log10(df$ent)
+response <- "logEnt"
+
+m <- lm(logEnt ~ T*sinDate + T*cosDate + F*sinDate + F*cosDate + MC + UW + CSO, data = df)
+summary(m)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+### Interaction with stepwise for variables with existing or potential sensors
+
+
+response <- "loglachno2"
+dfModel <- df[,c(response,VarsSensors)]
+
+m_init <- lm(loglachno2 ~ ., data = dfModel)
+m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
+
+summary(m_step)
+selectedRows <- c(1:dim(df)[1])
+plotColors <- colorOptions[df[,"abbrev"]]
+
+plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+
+### Interaction with stepwise for variables with only existing sensors
+## Lachno2; R^2 = 0.80##
+
+response <- "loglachno2"
+dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean")]
+dfModel <- df[,c(response,VarsSensors[c(4,6)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
+dfModel <- df[,c(response,VarsSensors[c(1,3)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
+
+m_init <- lm(loglachno2 ~ ., data = dfModel)
+m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
+
+summary(m_step)
+selectedRows <- c(1:dim(dfModel)[1])
+dfModel$abbrev <- df$abbrev
+plotColors <- colorOptions[dfModel[,"abbrev"]]
+
+plotModel(m=m_step,df=dfModel,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+
+### Interaction with stepwise for variables with only existing sensors
+## bachuman R^2 = ##
+
+response <- "logbacHum"
+df$logbacHum <- log10(df$bacHum)
+dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean")]
+
+m_init <- lm(logbacHum ~ ., data = dfModel)
+m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
+
+summary(m_step)
+selectedRows <- c(1:dim(dfModel)[1])
+dfModel$abbrev <- df$abbrev
+plotColors <- colorOptions[dfModel[,"abbrev"]]
+
+plotModel(m=m_step,df=dfModel,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+
+### Interaction with stepwise for variables with only existing sensors
+## E coli R^2 = ##
+
+response <- "logEcoli"
+dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean","Water_Temperature_mean")]
+dfModel <- df[,c(response,VarsSensors[c(4,6)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
+
+m_init <- lm(logEcoli ~ ., data = dfModel)
+m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
+
+summary(m_step)
+selectedRows <- c(1:dim(dfModel)[1])
+dfModel$abbrev <- df$abbrev
+plotColors <- colorOptions[dfModel[,"abbrev"]]
+
+plotModel(m=m_step,df=dfModel,response=response,selectedRows = c(1:dim(df)[1]),
           colorOptions = selectedSiteColors,plotColors = plotColors,
           pch=20)
 
