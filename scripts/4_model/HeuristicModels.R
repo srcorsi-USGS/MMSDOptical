@@ -58,12 +58,12 @@ response <- paste0("log",response)
 names(df)[dim(df)[2]] <- response
 
 which(substr(names(df),1,1)=="A")
-AbsVars <- names(df)[c(61:138,232:240)]
-FlVars <- names(df)[c(17:60,139:231)]
+AbsVars <- names(df)[c(61:138,232:240)] #define which variables are from Abs spectra 63:80, 120:130
+FlVars <- names(df)[c(17:60,139:231)]   #define which variables are from Fl spectra: 17:62, 81:119
 IVs <- c(grep("B",FlVars,invert = TRUE,value = TRUE))
 
 IVs <- c(IVs,c("UW","MC","sinDate","cosDate"))
-penalty.factor <- c(rep(1,length(c(AbsVars,FlVars))),0,0,0,0)
+#penalty.factor <- c(rep(1,length(c(AbsVars,FlVars))),0,0,0,0)
 
 sites <- unique(df$abbrev)
 
