@@ -358,12 +358,15 @@ plotModel(m=m,df=df,response=response,selectedRows = c(1:dim(df)[1]),
 
 
 ### Interaction with stepwise for variables with only existing sensors
-## Lachno2; R^2 = 0.80##
+## Lachno2; R^2 = 0.82##
+## T, F, Turbidity, sites, CSO, interaction with season
 
 response <- "loglachno2"
-dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean")]
+#dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean")]
+
+### FINAL LACHNO MODEL  #####
 dfModel <- df[,c(response,VarsSensors[c(4,6)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
-dfModel <- df[,c(response,VarsSensors[c(1,3)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
+#dfModel <- df[,c(response,VarsSensors[c(1,3)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
 
 m_init <- lm(loglachno2 ~ ., data = dfModel)
 m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
@@ -385,8 +388,30 @@ plotModel(m=m_step,df=dfModel,response=response,selectedRows = c(1:dim(df)[1]),
 response <- "logbacHum"
 df$logbacHum <- log10(df$bacHum)
 dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean")]
+dfModel <- df[,c(response,VarsSensors[c(4,6)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
 
 m_init <- lm(logbacHum ~ ., data = dfModel)
+m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
+
+summary(m_step)
+selectedRows <- c(1:dim(dfModel)[1])
+dfModel$abbrev <- df$abbrev
+plotColors <- colorOptions[dfModel[,"abbrev"]]
+
+plotModel(m=m_step,df=dfModel,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+### Interaction with stepwise for variables with only existing sensors
+## bachuman + Lachno R^2 = ##
+
+response <- "logHB"
+df$logHB <- log10(df$bacHum + df$lachno2)
+dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean")]
+dfModel <- df[,c(response,VarsSensors[c(4,6)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
+
+m_init <- lm(logHB ~ ., data = dfModel)
 m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
 
 summary(m_step)
@@ -408,6 +433,28 @@ dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean","Wate
 dfModel <- df[,c(response,VarsSensors[c(4,6)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
 
 m_init <- lm(logEcoli ~ ., data = dfModel)
+m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
+
+summary(m_step)
+selectedRows <- c(1:dim(dfModel)[1])
+dfModel$abbrev <- df$abbrev
+plotColors <- colorOptions[dfModel[,"abbrev"]]
+
+plotModel(m=m_step,df=dfModel,response=response,selectedRows = c(1:dim(df)[1]),
+          colorOptions = selectedSiteColors,plotColors = plotColors,
+          pch=20)
+
+
+
+### Interaction with stepwise for variables with only existing sensors
+## Enterococci R^2 = ##
+
+response <- "logEnt"
+df$logEnt <- log10(df$ent)
+dfModel <- df[,c(response,VarsSensors[c(1,2,3,4,6,11:15)],"Turbidity_mean","Water_Temperature_mean")]
+dfModel <- df[,c(response,VarsSensors[c(4,6)],"UW","MC","CSO","Turbidity_mean","sinDate","cosDate")]
+
+m_init <- lm(logEnt ~ ., data = dfModel)
 m_step <- step(m_init, scope = . ~ .^2, direction = "both",k=log(dim(dfModel)[1]))
 
 summary(m_step)
