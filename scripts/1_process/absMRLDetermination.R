@@ -54,6 +54,7 @@ absList <- optMRLAdjust(dfabs,dfMRLs,Wavelength,sampleGRnums)
 #DF of adjusted abs values
 dfabs2 <- absList[[1]]
 
+dir.create(file.path(cached.path), showWarnings = FALSE)
 dir.create(file.path(cached.path,cached.save), showWarnings = FALSE)
 
 saveRDS(dfabs2,file=file.path(cached.path,cached.save,"absP4MRLAdjusted.rds"))
